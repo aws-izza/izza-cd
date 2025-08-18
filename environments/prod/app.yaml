@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: test-app
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/test:v1.0.0  # Stable version
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/test:v1.0.1  # Stable version
         ports:
         - containerPort: 80
         env:
