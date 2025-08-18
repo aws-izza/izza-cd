@@ -1,46 +1,62 @@
-# deployment.yaml
+# environments/dev/app.yaml
+# Development Environment Configuration
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    environment: dev
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-app
+  name: test-app-dev
+  namespace: dev
   labels:
     app: test-app
+    environment: dev
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: test-app
+      environment: dev
   template:
     metadata:
       labels:
         app: test-app
+        environment: dev
     spec:
-      imagePullSecrets:
-      - name: ecr-secret
       containers:
       - name: test-app
         image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/test:v1.0.1
         ports:
         - containerPort: 80
+        env:
+        - name: ENVIRONMENT
+          value: "development"
         resources:
           requests:
+            memory: "32Mi"
+            cpu: "25m"
+          limits:
             memory: "64Mi"
             cpu: "50m"
-          limits:
-            memory: "128Mi"
-            cpu: "100m"
 
 ---
-# service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-app-service
+  name: test-app-service-dev
+  namespace: dev
   labels:
     app: test-app
+    environment: dev
 spec:
   selector:
     app: test-app
+    environment: dev
   ports:
   - protocol: TCP
     port: 80
