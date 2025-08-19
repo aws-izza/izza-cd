@@ -41,7 +41,7 @@ spec:
       serviceAccountName: backend-service-account
       containers:
       - name: backend
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/backend:development-20250819-111805-f8d5d94
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/backend:development-20250819-113000-05b6ae1
         ports:
         - containerPort: 8080
           name: http
