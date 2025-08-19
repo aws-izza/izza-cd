@@ -31,13 +31,13 @@ spec:
       serviceAccountName: backend-service-account
       containers:
       - name: backend
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/backend:v1.0.0
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/backend:v1.0.1
         ports:
         - containerPort: 8080
           name: http
         env:
         - name: SPRING_PROFILES_ACTIVE
-          value: "dev"
+          value: "prod"
         - name: ENVIRONMENT
           value: "development"
         - name: AWS_REGION
