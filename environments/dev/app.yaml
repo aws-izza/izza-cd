@@ -47,7 +47,7 @@ spec:
           name: http
         env:
         - name: SPRING_PROFILES_ACTIVE
-          value: "prod"
+          value: "dev"
         - name: ENVIRONMENT
           value: "development"
         - name: AWS_REGION
