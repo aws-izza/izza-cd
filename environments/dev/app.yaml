@@ -71,7 +71,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-app-service-dev
+  name: backend-service-dev
   namespace: dev
   labels:
     app: backend
