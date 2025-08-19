@@ -8,6 +8,16 @@ metadata:
     environment: dev
 
 ---
+# Ensure the service account exists with IRSA annotation
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backend-service-account
+  namespace: dev
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::177716289679:role/EKSDevBackendAppRole
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,6 +52,8 @@ spec:
           value: "development"
         - name: AWS_REGION
           value: "ap-northeast-2"
+        - name: AWS_DEFAULT_REGION
+          value: "ap-northeast-2"
         resources:
           requests:
             memory: "512Mi"
@@ -49,22 +61,22 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "500m"
-        # Spring Boot health checks
+        # Spring Boot health checks - adjusted for secret loading time
         livenessProbe:
           httpGet:
             path: /actuator/health
             port: 8080
-          initialDelaySeconds: 60
+          initialDelaySeconds: 120  # More time for secret loading
           periodSeconds: 30
-          timeoutSeconds: 5
+          timeoutSeconds: 10
           failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /actuator/health
             port: 8080
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60   # More time for startup
           periodSeconds: 10
-          timeoutSeconds: 5
+          timeoutSeconds: 10
           failureThreshold: 3
 
 ---
