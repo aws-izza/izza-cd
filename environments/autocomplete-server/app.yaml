@@ -69,22 +69,22 @@ spec:
           #   memory: "512Mi"
           #   cpu: "500m"
         # Health checks - adjusted for trie loading time
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 180  # More time for trie initialization
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 120  # Time for database connection and initial trie load
-          periodSeconds: 10
-          timeoutSeconds: 10
-          failureThreshold: 5
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        #   initialDelaySeconds: 180  # More time for trie initialization
+        #   periodSeconds: 30
+        #   timeoutSeconds: 10
+        #   failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        #   initialDelaySeconds: 120  # Time for database connection and initial trie load
+        #   periodSeconds: 10
+        #   timeoutSeconds: 10
+        #   failureThreshold: 5
 
 ---
 apiVersion: v1
