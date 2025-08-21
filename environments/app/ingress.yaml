@@ -1,0 +1,47 @@
+# environments/app/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: app
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:177716289679:certificate/e7de7e00-0b93-4199-bf34-ee3a7c3db95b
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+spec:
+  rules:
+  - host: izza-nopizza.com
+    http:
+      paths:
+      # Development Backend
+      - path: /dev/api/v1
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-dev-service
+            port:
+              number: 80
+      
+      # Production Backend  
+      - path: /prod/api/v1
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-prod-service
+            port:
+              number: 80
+      
+      # Autocomplete Server (production service)
+      - path: /api/v1/ac
+        pathType: Prefix
+        backend:
+          service:
+            name: autocomplete-server-service
+            port:
+              number: 80

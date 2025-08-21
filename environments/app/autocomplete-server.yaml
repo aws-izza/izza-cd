@@ -1,0 +1,87 @@
+# environments/app/autocomplete-server.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: autocomplete-server-service-account
+  namespace: app
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::177716289679:role/EKSAutocompleteServerAppRole
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autocomplete-server
+  namespace: app
+  labels:
+    app: autocomplete-server
+    environment: prod
+    component: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autocomplete-server
+      environment: prod
+  template:
+    metadata:
+      labels:
+        app: autocomplete-server
+        environment: prod
+        component: api
+    spec:
+      serviceAccountName: autocomplete-server-service-account
+      nodeSelector:
+        workload: app
+      containers:
+      - name: autocomplete-server
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/autocomplete-server:v1.0.0
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: ENVIRONMENT
+          value: "production"
+        - name: AWS_REGION
+          value: "ap-northeast-2"
+        - name: AWS_DEFAULT_REGION
+          value: "ap-northeast-2"
+        - name: DB_SECRET_NAME
+          value: "rds!db-83437ad6-f925-4f4d-8340-f10ad49f12e9"
+        - name: DB_HOST
+          value: "izza-db.cji28gw0m12f.ap-northeast-2.rds.amazonaws.com"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "izza"
+        - name: DB_SSLMODE
+          value: "require"
+        - name: BATCH_SIZE
+          value: "1000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: autocomplete-server-service
+  namespace: app
+  labels:
+    app: autocomplete-server
+    environment: prod
+spec:
+  selector:
+    app: autocomplete-server
+    environment: prod
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http
+  type: ClusterIP
