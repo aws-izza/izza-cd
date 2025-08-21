@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: backend-dev-service-account
+  name: backend-service-account
   namespace: app
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::177716289679:role/EKSDevBackendAppRole
@@ -30,7 +30,7 @@ spec:
         environment: dev
         component: api
     spec:
-      serviceAccountName: backend-dev-service-account
+      serviceAccountName: backend-service-account
       nodeSelector:
         workload: app
       containers:
