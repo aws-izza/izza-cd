@@ -14,30 +14,66 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    # Path rewriting for dev environment - strips /dev/ prefix
+    alb.ingress.kubernetes.io/actions.backend-dev-rewrite: |
+      {
+        "type": "forward",
+        "forwardConfig": {
+          "targetGroups": [
+            {
+              "serviceName": "backend-dev-service",
+              "servicePort": 80,
+              "weight": 100
+            }
+          ]
+        },
+        "rewriteConfig": {
+          "pathPattern": "/dev/*",
+          "targetPath": "/*"
+        }
+      }
+    # Path rewriting for prod environment - strips /prod/ prefix  
+    alb.ingress.kubernetes.io/actions.backend-prod-rewrite: |
+      {
+        "type": "forward",
+        "forwardConfig": {
+          "targetGroups": [
+            {
+              "serviceName": "backend-prod-service",
+              "servicePort": 80,
+              "weight": 100
+            }
+          ]
+        },
+        "rewriteConfig": {
+          "pathPattern": "/prod/api/v1/*",
+          "targetPath": "/api/v1/*"
+        }
+      }
 spec:
   rules:
   - host: izza-nopizza.com
     http:
       paths:
-      # Development Backend
+      # Development Backend with rewrite
       - path: /dev/
         pathType: Prefix
         backend:
           service:
-            name: backend-dev-service
+            name: backend-dev-rewrite
             port:
-              number: 80
+              name: use-annotation
       
-      # Production Backend  
+      # Production Backend with rewrite
       - path: /prod/api/v1
         pathType: Prefix
         backend:
           service:
-            name: backend-prod-service
+            name: backend-prod-rewrite
             port:
-              number: 80
+              name: use-annotation
       
-      # Autocomplete Server (production service)
+      # Autocomplete Server
       - path: /api/v1/ac
         pathType: Prefix
         backend:
