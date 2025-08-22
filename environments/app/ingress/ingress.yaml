@@ -37,9 +37,9 @@ spec:
             port:
               number: 80
       
-      # Autocomplete Server
-      - path: /ac/
-        pathType: Prefix
+      # Autocomplete Server - route to root path
+      - path: /ac
+        pathType: Exact
         backend:
           service:
             name: autocomplete-server-service
