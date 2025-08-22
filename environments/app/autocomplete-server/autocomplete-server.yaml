@@ -58,6 +58,10 @@ spec:
           value: "require"
         - name: BATCH_SIZE
           value: "1000"
+        - name: S3_BUCKET_NAME
+          value: "izza-test-data"
+        - name: S3_REGION
+          value: "ap-northeast-2"  # Same as AWS_REGION
         resources:
           requests:
             memory: "256Mi"
