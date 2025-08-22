@@ -38,7 +38,7 @@ spec:
               number: 80
       
       # Autocomplete Server
-      - path: /autocomplete/
+      - path: /ac/
         pathType: Prefix
         backend:
           service:
