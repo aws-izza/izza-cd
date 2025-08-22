@@ -18,7 +18,7 @@ metadata:
     environment: prod
     component: api
 spec:
-  replicas: 0 # DB WIP - don't run it yet
+  replicas: 1 # DB WIP - don't run it yet
   selector:
     matchLabels:
       app: autocomplete-server
