@@ -20,7 +20,7 @@ spec:
     http:
       paths:
       # Development Backend
-      - path: /dev/api/v1
+      - path: /dev/
         pathType: Prefix
         backend:
           service:
