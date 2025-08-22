@@ -5,7 +5,7 @@ metadata:
   name: backend-prod-service-account
   namespace: app
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::177716289679:role/EKSProdBackendAppRole
+    eks.amazonaws.com/role-arn: arn:aws:iam::177716289679:role/EKSDevBackendAppRole
 
 ---
 apiVersion: apps/v1
