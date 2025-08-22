@@ -30,7 +30,7 @@ spec:
         environment: dev
         component: api
     spec:
-      serviceAccountName: backend-service-account
+      serviceAccountName: backend-dev-service-account
       nodeSelector:
         workload: app
       containers:
