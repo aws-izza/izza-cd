@@ -14,67 +14,31 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
-    # Path rewriting for dev environment - strips /dev/ prefix
-    alb.ingress.kubernetes.io/actions.backend-dev-rewrite: |
-      {
-        "type": "forward",
-        "forwardConfig": {
-          "targetGroups": [
-            {
-              "serviceName": "backend-dev-service",
-              "servicePort": 80,
-              "weight": 100
-            }
-          ]
-        },
-        "rewriteConfig": {
-          "pathPattern": "/dev/*",
-          "targetPath": "/*"
-        }
-      }
-    # Path rewriting for prod environment - strips /prod/ prefix  
-    alb.ingress.kubernetes.io/actions.backend-prod-rewrite: |
-      {
-        "type": "forward",
-        "forwardConfig": {
-          "targetGroups": [
-            {
-              "serviceName": "backend-prod-service",
-              "servicePort": 80,
-              "weight": 100
-            }
-          ]
-        },
-        "rewriteConfig": {
-          "pathPattern": "/prod/api/v1/*",
-          "targetPath": "/api/v1/*"
-        }
-      }
 spec:
   rules:
   - host: izza-nopizza.com
     http:
       paths:
-      # Development Backend with rewrite
+      # Development Backend
       - path: /dev/
         pathType: Prefix
         backend:
           service:
-            name: backend-dev-rewrite
+            name: backend-dev-service
             port:
-              name: use-annotation
+              number: 80
       
-      # Production Backend with rewrite
+      # Production Backend  
       - path: /prod/api/v1
         pathType: Prefix
         backend:
           service:
-            name: backend-prod-rewrite
+            name: backend-prod-service
             port:
-              name: use-annotation
+              number: 80
       
       # Autocomplete Server
-      - path: /api/v1/ac
+      - path: /autocomplete/
         pathType: Prefix
         backend:
           service:
