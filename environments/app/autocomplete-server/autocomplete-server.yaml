@@ -35,7 +35,7 @@ spec:
         workload: app
       containers:
       - name: autocomplete-server
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/autocomplete-server:14-7dd2979
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/autocomplete-server:14
         ports:
         - containerPort: 8080
           name: http
