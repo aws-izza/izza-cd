@@ -22,7 +22,7 @@ spec:
       serviceAccountName: ai-report-sa
       containers:
       - name: ai-report-container
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/aireport:main-20250825-025303-ad21016
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/aireport:report-20250825-031317-ef943ce
         ports:
         - containerPort: 8000
         resources:
