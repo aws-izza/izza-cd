@@ -15,7 +15,7 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
 spec:
   rules:
-  - host: izza-nopizza.com
+  - host: api.izza-nopizza.com
     http:
       paths:
       # Development Backend - matches /dev/* paths
@@ -44,3 +44,6 @@ spec:
             name: autocomplete-server-service
             port:
               number: 80
+  - host: izza-nopizza.com  # Keep existing for frontend
+    http:
+      paths: []  # No backend paths, CloudFront handles this
