@@ -1,4 +1,3 @@
-# environments/app/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -11,7 +10,7 @@ metadata:
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:177716289679:certificate/e7de7e00-0b93-4199-bf34-ee3a7c3db95b
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/healthcheck-path: /dev/actuator/health  # Update to dev health path
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/healthcheck-port: traffic-port
 spec:
@@ -19,8 +18,8 @@ spec:
   - host: izza-nopizza.com
     http:
       paths:
-      # Development Backend
-      - path: /dev/
+      # Development Backend - matches /dev/* paths
+      - path: /dev
         pathType: Prefix
         backend:
           service:
@@ -28,8 +27,8 @@ spec:
             port:
               number: 80
       
-      # Production Backend  
-      - path: /prod/api/v1
+      # Production Backend - matches /prod/* paths
+      - path: /prod
         pathType: Prefix
         backend:
           service:
@@ -37,7 +36,7 @@ spec:
             port:
               number: 80
       
-      # Autocomplete Server
+      # Autocomplete Server (unchanged)
       - path: /api/v1/ac
         pathType: Prefix
         backend:
