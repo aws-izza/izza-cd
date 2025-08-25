@@ -22,7 +22,7 @@ spec:
       serviceAccountName: ai-report-sa
       containers:
       - name: ai-report-container
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/aireport:main-20250821-074414-39697f9
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/aireport:main-20250825-025303-ad21016
         ports:
         - containerPort: 8000
         resources:
@@ -45,7 +45,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 80
+      port: 8000
       targetPort: 8000
   type: LoadBalancer
   loadBalancerSourceRanges:
