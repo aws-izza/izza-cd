@@ -18,7 +18,7 @@ metadata:
     environment: prod
     component: api
 spec:
-  replicas: 0  # More replicas for production
+  replicas: 2  # More replicas for production
   selector:
     matchLabels:
       app: backend
