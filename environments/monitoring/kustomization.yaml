@@ -5,7 +5,6 @@ kind: Kustomization
 namespace: metric
 
 resources:
-  - alertmanager.yaml        # Alertmanager 설정 분리
   - dashboards/my-grafana-dashboard.yaml
   - dashboards/my-rds-dashboard.yaml
 
