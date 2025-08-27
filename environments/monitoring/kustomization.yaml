@@ -1,0 +1,19 @@
+# 2. environments/monitoring/kustomization.yaml (복원)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: metric
+
+resources:
+  - alertmanager.yaml        # Alertmanager 설정 분리
+  - dashboards/my-grafana-dashboard.yaml
+  - dashboards/my-rds-dashboard.yaml
+
+helmCharts:
+  - name: kube-prometheus-stack
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 61.7.2
+    releaseName: izza-monitoring    # 🔧 릴리스명 통일
+    namespace: metric
+    valuesFile: prometheus-values.yaml
+    includeCRDs: true
