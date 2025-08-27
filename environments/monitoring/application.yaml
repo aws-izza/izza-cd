@@ -49,6 +49,7 @@ spec:
           replicaCount: 1
           serviceAccount:
             create: true
+            name: grafana
             annotations:
               eks.amazonaws.com/role-arn: arn:aws:iam::177716289679:role/eks-grafana-cloudwatch
           persistence:
