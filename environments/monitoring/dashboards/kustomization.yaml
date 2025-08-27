@@ -5,3 +5,4 @@ namespace: metric
 
 resources:
   - my-grafana-dashboard.yaml
+  - my-rds-dashboard.yaml
