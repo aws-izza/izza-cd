@@ -94,9 +94,9 @@ spec:
               alb.ingress.kubernetes.io/group.name: observability
             hosts:
               - grafana.izza-nopizza.com
-            paths:
-              - path: /
-                pathType: Prefix
+            
+            path: /
+            pathType: Prefix
           affinity:
             nodeAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -152,9 +152,9 @@ spec:
               alb.ingress.kubernetes.io/group.name: observability
             hosts:
               - prometheus.izza-nopizza.com
-            paths:
-              - path: /
-                pathType: Prefix
+            
+            path: /
+            pathType: Prefix
 
   destination:
     server: https://kubernetes.default.svc
