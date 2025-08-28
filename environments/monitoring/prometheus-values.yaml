@@ -84,13 +84,13 @@ prometheus:
     replicas: 1
     resources:
       limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 1000m
+        memory: 2Gi
       requests:
-        cpu: 200m
-        memory: 256Mi
-    retention: 10d
-    retentionSize: 20GiB
+        cpu: 500m
+        memory: 1Gi
+    retention: 3d
+    retentionSize: 5GiB
     scrapeInterval: 30s
     storageSpec:
       volumeClaimTemplate:
