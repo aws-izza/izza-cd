@@ -15,4 +15,4 @@ helmCharts:
     releaseName: izza-monitoring    # 🔧 릴리스명 통일
     namespace: metric
     valuesFile: prometheus-values.yaml
-    includeCRDs: true
+    includeCRDs: false
