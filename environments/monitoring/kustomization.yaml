@@ -8,7 +8,7 @@ resources:
   - dashboards/my-grafana-dashboard.yaml
   - dashboards/my-rds-dashboard.yaml
   - dashboards/security-dashboard.yaml
-  - dashboards/cloudtrail-dashboard.yaml
+  - security/cloudtrail-dashboard.yaml
   - security/cloudwatch-serviceaccount.yaml
   - security/guardduty-alerts.yaml
 
