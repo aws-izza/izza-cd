@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudtrail-dashboard
+  namespace: metric
+  labels:
+    grafana_dashboard: "1"
+data:
+  cloudtrail-audit.json: |-
+    {
+      "uid": "cloudtrail-audit-logs",
+      "title": "CloudTrail Audit Dashboard",
+      "tags": ["aws", "cloudtrail", "audit", "security"],
+      "time": {
+        "from": "now-6h",
+        "to": "now"
+      },
+      "refresh": "5m",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Total API Calls (6h)",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": 0},
+                  {"color": "yellow", "value": 1000},
+                  {"color": "red", "value": 5000}
+                ]
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/CloudWatchLogs",
+            "metricName": "IncomingLogEvents",
+            "dimensions": {"LogGroupName": "/aws/cloudtrail"},
+            "statistics": ["Sum"],
+            "period": "21600"
+          }]
+        },
+        {
+          "type": "stat",
+          "title": "CloudTrail Status",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": 0},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Inactive"}}, "type": "value"},
+                {"options": {"1": {"text": "Active"}}, "type": "value"}
+              ]
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/CloudTrail",
+            "metricName": "S3BucketDelivery",
+            "statistics": ["Maximum"],
+            "period": "300"
+          }]
+        },
+        {
+          "type": "timeseries",
+          "title": "API Call Volume Over Time",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "fillOpacity": 10
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/CloudWatchLogs",
+            "metricName": "IncomingLogEvents",
+            "dimensions": {"LogGroupName": "/aws/cloudtrail"},
+            "statistics": ["Sum"],
+            "period": "300",
+            "alias": "CloudTrail Events"
+          }]
+        },
+        {
+          "type": "table",
+          "title": "CloudTrail Configuration",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left"
+              }
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/CloudTrail",
+            "metricName": "S3BucketDelivery",
+            "statistics": ["Maximum"],
+            "period": "300"
+          }]
+        }
+      ]
+    }

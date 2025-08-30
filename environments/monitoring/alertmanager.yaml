@@ -1,6 +1,5 @@
 # environments/monitoring/alertmanager.yaml
 alertmanager:
-
   extraSecretMounts:
     - name: slack-webhook-secret-volume
       secretName: alertmanager-slack-webhook 
@@ -12,32 +11,31 @@ alertmanager:
       slack_api_url_file: '/etc/alertmanager/secrets/SLACK_WEBHOOK_URL'
 
     route:
-      group_by: ['alertname', 'job']
-      # ... (나머지 route 설정은 동일) ...
-
-    receivers:
-      - name: 'slack-notifications'
-        slack_configs:
-          - channel: '#k8s-alert'
-            # ... (나머지 slack_configs 설정은 동일) ...  
-
-    route:
-      group_by: ['alertname', 'job']
+      group_by: ['alertname', 'job', 'severity']
       group_wait: 30s
       group_interval: 30m
       repeat_interval: 1h
       receiver: 'slack-notifications'
       routes:
-        - receiver: 'slack-notifications'
-          # 심각도(severity)가 critical인 알림은 즉시 받도록 설정
+        # 보안 Critical 알림은 즉시 전송
+        - receiver: 'security-critical-notifications'
           matchers:
             - severity = "critical"
-          continue: true # 다음 규칙도 계속 확인
+            - alertname =~ "GuardDuty.*|DDoS.*|CloudTrail.*"
+          group_wait: 0s
+          repeat_interval: 15m
+          continue: false
+
+        # 일반 Critical 알림
+        - receiver: 'slack-notifications'
+          matchers:
+            - severity = "critical"
+          continue: true
 
     receivers:
       - name: 'slack-notifications'
         slack_configs:
-          - channel: '#k8s-alert' # 본인 채널 이름으로 수정
+          - channel: '#k8s-alert'
             send_resolved: true
             title: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity | toUpper }})'
             text: |
@@ -45,19 +43,31 @@ alertmanager:
               *Description:* {{ .CommonAnnotations.description }}
               *Instance:* `{{ .CommonLabels.instance }}`
 
-# 2. Prometheus 알림 규칙 (새로운 규칙 추가!)
+      - name: 'security-critical-notifications'
+        slack_configs:
+          - channel: '#security-alerts'
+            send_resolved: true
+            color: 'danger'
+            title: '🚨 [SECURITY CRITICAL] {{ .CommonLabels.alertname }}'
+            text: |
+              *🔴 CRITICAL SECURITY ALERT 🔴*
+              
+              *Alert:* {{ .CommonLabels.alertname }}
+              *Summary:* {{ .CommonAnnotations.summary }}
+              *Description:* {{ .CommonAnnotations.description }}
+              *Instance:* `{{ .CommonLabels.instance }}`
+
+# 2. Prometheus 알림 규칙
 prometheus:
   prometheusSpec:
-    # PDF 문서 기반의 규칙 적용 방식을 유지합니다.
     ruleSelector:
       matchLabels: {}
     ruleNamespaceSelector:
       matchLabels: {}
 
-# Helm 차트의 기본 규칙 외에 우리가 직접 만든 규칙들을 여기에 정의합니다.
 serverFiles:
   rules:
-    # 그룹 1: 노드(하드웨어) 상태 감시
+    # 기존 노드 알림
     node-alerts.yml:
       groups:
         - name: NodeMetrics
@@ -80,13 +90,12 @@ serverFiles:
                 summary: "High Memory Usage on Node"
                 description: "Memory usage on instance {{ $labels.instance }} is over 85% for the last 5 minutes."
 
-    # 그룹 2: 애플리케이션(파드) 상태 감시
+    # 기존 애플리케이션 알림
     application-alerts.yml:
       groups:
         - name: ApplicationStatus
           rules:
             - alert: KubeDeploymentReplicasMismatch
-              # 배포(Deployment)에 설정된 파드 수와 실제 사용 가능한 파드 수가 2분 동안 다를 경우
               expr: kube_deployment_spec_replicas{namespace="monitoring"} != kube_deployment_status_replicas_available{namespace="monitoring"}
               for: 2m
               labels:
@@ -96,7 +105,6 @@ serverFiles:
                 description: "Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} does not have the desired number of available replicas."
 
             - alert: PrometheusDown
-              # Prometheus 자체의 up 메트릭을 감시하여 1분 이상 응답이 없으면 알림
               expr: up{job="prometheus-k8s"} == 0
               for: 1m
               labels:
@@ -104,3 +112,26 @@ serverFiles:
               annotations:
                 summary: "Prometheus is down"
                 description: "The Prometheus instance {{ $labels.instance }} is down."
+
+    # 기본 네트워크 보안 알림 (AWS 없이도 동작)
+    network-security-alerts.yml:
+      groups:
+        - name: NetworkSecurity
+          rules:
+            - alert: HighNetworkTraffic
+              expr: rate(node_network_receive_bytes_total[5m]) > 10485760  # 10MB/s
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: "High Network Traffic"
+                description: "High network traffic on {{ $labels.instance }}, interface {{ $labels.device }}: {{ $value | humanize }}B/s"
+
+            - alert: HighConnectionCount
+              expr: node_netstat_Tcp_CurrEstab > 1000
+              for: 5m
+              labels:
+                severity: warning
+              annotations:
+                summary: "High TCP Connection Count"
+                description: "Node {{ $labels.instance }} has {{ $value }} established TCP connections."

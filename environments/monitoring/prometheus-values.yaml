@@ -45,6 +45,19 @@ grafana:
 
       uid: cloudwatch-rds
       editable: true
+
+    - name: CloudWatch-Security
+
+      isDefault: false
+      type: cloudwatch
+      access: proxy
+      jsonData:
+        authType: default
+        defaultRegion: ap-northeast-2
+
+      uid: cloudwatch-security
+      editable: true
+
   env:
     GF_INSTALL_PLUGINS: ""
     AWS_SDK_LOAD_CONFIG: "true"
