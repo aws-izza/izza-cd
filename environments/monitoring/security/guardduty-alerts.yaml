@@ -75,7 +75,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: security-serviceMonitor
+  name: security-service-monitor
   namespace: metric
 data:
   cloudwatch-security.yaml: |-
