@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: metric
+
+resources:
+  - dashboards/my-grafana-dashboard.yaml
+  - dashboards/my-rds-dashboard.yaml
+  - dashboards/security-dashboard.yaml
+  - security/cloudtrail-dashboard.yaml
+  - security/cloudwatch-serviceaccount.yaml
+  - security/guardduty-prometheus-rules.yaml
+  - security/cloudwatch-exporter.yaml
+
+helmCharts:
+  - name: kube-prometheus-stack
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 61.7.2
+    releaseName: izza-monitoring
+    namespace: metric
+    valuesFile: prometheus-values.yaml
+    includeCRDs: false

@@ -1,0 +1,251 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: security-dashboard
+  namespace: metric
+  labels:
+    grafana_dashboard: "1"
+data:
+  security-monitoring.json: |-
+    {
+      "uid": "security-monitoring",
+      "title": "AWS Security Monitoring",
+      "tags": ["aws", "security", "guardduty", "cloudtrail"],
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "refresh": "5m",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "GuardDuty Findings (24h)",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": 0},
+                  {"color": "yellow", "value": 1},
+                  {"color": "red", "value": 10}
+                ]
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/GuardDuty",
+            "metricName": "FindingCount",
+            "statistics": ["Sum"],
+            "period": "3600"
+          }]
+        },
+        {
+          "type": "stat",
+          "title": "High Severity Findings",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": 0},
+                  {"color": "red", "value": 1}
+                ]
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/GuardDuty",
+            "metricName": "FindingCount",
+            "dimensions": {"Severity": "High"},
+            "statistics": ["Sum"],
+            "period": "3600"
+          }]
+        },
+        {
+          "type": "stat",
+          "title": "CloudTrail API Calls (1h)",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 6, "w": 6, "x": 12, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": 0},
+                  {"color": "yellow", "value": 1000},
+                  {"color": "red", "value": 5000}
+                ]
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/CloudWatchLogs",
+            "metricName": "IncomingLogEvents",
+            "dimensions": {"LogGroupName": "/aws/cloudtrail"},
+            "statistics": ["Sum"],
+            "period": "3600"
+          }]
+        },
+        {
+          "type": "stat",
+          "title": "DDoS Protection Status",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 6, "w": 6, "x": 18, "y": 0},
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": 0},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Inactive"}}, "type": "value"},
+                {"options": {"1": {"text": "Active"}}, "type": "value"}
+              ]
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/DDoSProtection",
+            "metricName": "DDoSDetected",
+            "statistics": ["Maximum"],
+            "period": "300"
+          }]
+        },
+        {
+          "type": "timeseries",
+          "title": "GuardDuty Findings Over Time",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "fillOpacity": 10
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [
+            {
+              "region": "ap-northeast-2",
+              "namespace": "AWS/GuardDuty",
+              "metricName": "FindingCount",
+              "dimensions": {"Severity": "High"},
+              "statistics": ["Sum"],
+              "period": "3600",
+              "alias": "High Severity"
+            },
+            {
+              "region": "ap-northeast-2", 
+              "namespace": "AWS/GuardDuty",
+              "metricName": "FindingCount",
+              "dimensions": {"Severity": "Medium"},
+              "statistics": ["Sum"],
+              "period": "3600",
+              "alias": "Medium Severity"
+            },
+            {
+              "region": "ap-northeast-2",
+              "namespace": "AWS/GuardDuty",
+              "metricName": "FindingCount",
+              "dimensions": {"Severity": "Low"},
+              "statistics": ["Sum"],
+              "period": "3600",
+              "alias": "Low Severity"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Network Traffic Analysis",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "line",
+                "lineInterpolation": "linear",
+                "lineWidth": 2,
+                "fillOpacity": 10
+              },
+              "unit": "bps"
+            }
+          },
+          "targets": [
+            {
+              "region": "ap-northeast-2",
+              "namespace": "AWS/EC2",
+              "metricName": "NetworkIn",
+              "statistics": ["Average"],
+              "period": "300",
+              "alias": "Network In"
+            },
+            {
+              "region": "ap-northeast-2",
+              "namespace": "AWS/EC2", 
+              "metricName": "NetworkOut",
+              "statistics": ["Average"],
+              "period": "300",
+              "alias": "Network Out"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "CloudTrail API Activity",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "drawStyle": "bars",
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "fillOpacity": 60
+              },
+              "unit": "short"
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/CloudWatchLogs",
+            "metricName": "IncomingLogEvents", 
+            "dimensions": {"LogGroupName": "/aws/cloudtrail"},
+            "statistics": ["Sum"],
+            "period": "3600",
+            "alias": "API Calls"
+          }]
+        },
+        {
+          "type": "table",
+          "title": "Recent Security Events",
+          "datasource": {"uid": "cloudwatch-security"},
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14},
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "left"
+              }
+            }
+          },
+          "targets": [{
+            "region": "ap-northeast-2",
+            "namespace": "AWS/GuardDuty",
+            "metricName": "FindingCount",
+            "statistics": ["Sum"],
+            "period": "3600"
+          }]
+        }
+      ]
+    }

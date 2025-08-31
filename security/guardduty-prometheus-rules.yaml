@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardduty-prometheus-rules
+  namespace: metric
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+data:
+  guardduty-rules.yml: |-
+    groups:
+      - name: NetworkSecurity
+        rules:
+          - alert: HighNetworkTraffic
+            expr: rate(node_network_receive_bytes_total[5m]) > 10485760
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High Network Traffic"
+              description: "High network traffic on {{ $labels.instance }}"
