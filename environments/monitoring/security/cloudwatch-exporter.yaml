@@ -41,7 +41,7 @@ spec:
             - name: AWS_REGION
               value: "ap-northeast-2"
           args:
-            - "--config.file=/etc/cloudwatch-exporter/config.yml"
+            - "/etc/cloudwatch-exporter/config.yml"
           volumeMounts:
             - name: config
               mountPath: /etc/cloudwatch-exporter
