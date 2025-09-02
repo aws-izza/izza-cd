@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mock-page
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/mock:mockPage-20250902-163108-e787e52
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/mock:mockPage-20250902-163818-fe07989
         ports:
         - containerPort: 8000
 ---
