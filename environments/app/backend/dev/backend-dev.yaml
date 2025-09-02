@@ -40,7 +40,7 @@ spec:
         workload: app
       containers:
       - name: backend
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/backend:development-20250902-010730-3d074cc
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/backend:development-20250902-060347-6147a01
         ports:
         - containerPort: 8080
           name: http
