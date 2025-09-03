@@ -57,3 +57,14 @@ spec:
             name: ai-report-service
             port:
               number: 80
+  # NEW: Email Registration subdomain - clean root path
+  - host: email.izza-nopizza.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: email-registration-service
+            port:
+              number: 80
