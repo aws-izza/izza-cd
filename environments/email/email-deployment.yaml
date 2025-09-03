@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: email-registration-deployment
-  namespace: email-services
+  namespace: app
   labels:
     app: email-registration
 spec:
@@ -17,13 +17,13 @@ spec:
     spec:
       containers:
       - name: email-registration-app
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/email:subscribe-20250903-131641-6dc284d
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/email:subscribe-20250903-132758-7c3ba93
         ports:
         - containerPort: 8000
         env:
         - name: DB_HOST
           # The FQDN for the service within the cluster
-          value: "mariadb-nlb-service.email-services.svc.cluster.local"
+          value: "mariadb-nlb-service.app.svc.cluster.local"
         - name: DB_USER
           value: "root"
         - name: DB_PASSWORD
@@ -47,7 +47,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: email-registration-service
-  namespace: email-services
+  namespace: app
 spec:
   selector:
     app: email-registration
