@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: email-registration-app
-        image: YOUR_DOCKER_IMAGE:latest # <-- IMPORTANT: Replace with your actual image name and tag
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/email:subscribe-20250903-131641-6dc284d
         ports:
         - containerPort: 8000
         env:
