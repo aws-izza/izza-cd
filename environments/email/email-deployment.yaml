@@ -6,7 +6,7 @@ metadata:
   labels:
     app: email-registration
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: email-registration
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: email-registration-app
-        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/email:subscribe-20250903-132758-7c3ba93
+        image: 177716289679.dkr.ecr.ap-northeast-2.amazonaws.com/izza/email:subscribe-20250903-133119-8558695
         ports:
         - containerPort: 8000
         env:
